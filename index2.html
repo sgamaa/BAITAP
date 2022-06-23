@@ -1,0 +1,317 @@
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <style>
+        body {
+            padding: 0px;
+            margin: 0px;
+            font-family: Arial, Helvetica, sans-serif;
+            color:white;
+        }
+        a:link,a:visited ,a:hover , a:active   {
+            color: white;
+            text-decoration: underline;
+        }
+
+        body, html {
+                  height: 100%;
+                }
+            html, body {
+                padding: 0px;
+                margin: 0px;
+                background: #35363A;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                height: 100%;
+                overflow-x: scroll;
+            }
+
+        .header {
+            background-color: rgba(0, 91, 212, 0.3);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: large;
+            color:white;
+
+            text-align: center;
+            padding: 30px;
+        }
+        .footer
+        {
+
+        }
+
+        .info
+        {
+            text-align:left;
+            color:blue;
+            width:30%;
+            margin:auto;
+            padding:20px;
+            font-size:14px;
+        }
+
+
+        .content {
+            width: 100%;
+        }
+
+        .upload_part {
+            background-color: rgba(0, 91, 212, 0.3);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .upload_button {
+            background-color: #FEED06;
+            color: black;
+            padding: 15px;
+            font-size: 16px;
+            border: 0px;
+            border-radius: 5px;
+            -webkit-box-shadow: 6px 8px 18px -5px rgba(0, 0, 0, 0.38);
+            -moz-box-shadow: 6px 8px 18px -5px rgba(0, 0, 0, 0.38);
+            box-shadow: 6px 8px 18px -5px rgba(0, 0, 0, 0.38);
+            cursor: pointer;
+        }
+
+        .upload_hint {
+            margin: 10px;
+            font-size: 14px;
+            color: rgb(200, 200, 200);
+        }
+
+        .result_part {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .result_title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .result_id {
+            padding: 10px;
+            margin: 15px;
+            font-size: 16px;
+
+        }
+
+        .result_id_number {
+            margin: 15px;
+            padding: 10px;
+            padding-left: 15px;
+            padding-right: 15px;
+            background-color: #0000ff;
+            color: black;
+            font-weight: bold;
+            font-size: 18px;
+            border-radius: 5px;
+
+        }
+    </style>
+</head>
+
+<body>
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"
+  <div class="w3-container">
+    <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-jumbo w3-padding w3-hover-grey" title="close menu">
+      <i class="fa fa-remove"></i>
+    </a>
+
+    <h4><b>  Trịnh Quang Trung: 19146009</b></h4>
+	<h4><b>  GVHD: PGS.TS Nguyễn Trường Thịnh</b></h4>
+    <p class="w3-text-grey"> MÔN HỌC TRÍ TUỆ NHÂN TẠO</p>
+	<p class="w3-text-grey">  </p>
+  </div>
+  <div class="w3-bar-block">
+
+
+
+  </div>
+  <div class="w3-panel w3-large">
+    <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    <i class="fa fa-instagram w3-hover-opacity"></i>
+    <i class="fa fa-snapchat w3-hover-opacity"></i>
+    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+    <i class="fa fa-twitter w3-hover-opacity"></i>
+    <i class="fa fa-linkedin w3-hover-opacity"></i>
+  </div>
+  <!-- dong ho -->
+	  <p id="demo"></p>
+
+<script>
+var myVar = setInterval(myTimer, 1000);
+
+function myTimer() {
+  var d = new Date();
+  document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+}
+</script>
+</nav>
+<div class='header'>
+    NHẬN DIỆN HUYỆT ĐẠO TRÊN ĐẦU NGƯỜI
+</div>
+<div class='content'>
+
+    <div class='upload_part'>
+        <button class='upload_button' id="upload_button">Upload ảnh đầu người</button>
+        <div class='upload_hint' id='upload_hint'>
+            Các định dạng được hỗ trợ: PNG, JPG và JPEG <br>
+            (Lưu ý: Trang Web Này Chỉ Mang Tính Chất Tham Khảo)
+        </div>
+        <form action="/" method="POST" enctype="multipart/form-data" id='form'>
+            <input type="file" name="file" id="fileinput" accept="image/*" style="display:none">
+        </form>
+    </div>
+
+    <div class='result_part'>
+        <div class='result_title'><b>Kết quả nhận diện</b></div> <br>
+          <p id="text1"></p>
+        <div class='result_id' id="result_info">_</div>
+        <img style="max-width:300px; border-radius:1rem"
+             src="https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png"
+             alt="User Image" id="display_image">
+    </div>
+</div>
+<div class='footer'>
+
+</div>
+
+</body>
+<script>
+    const FLOWER_CLASS = {
+        0: 'Đây là huyệt Ấn đường:' +
+            ' Huyệt Ấn đường nằm ở giữa 2 chân mày, tại vị trí giao nhau giữa sống mũi và trán' +
+            ' Huyệt Ấn đường là một trong các huyệt chữa đau đầu vô cùng hiệu quả' +
+            ' Day bấm huyệt Ấn đường sẽ giúp giảm bớt các cơn đau nhức đầu nhanh chóng.' +
+            ' Đặc biệt những ai phải chật vật với chứng viêm xoang, chảy máu cam, sốt cao, mỏi mắt... cũng sẽ được lợi khi bấm huyệt đạo này.',
+        1: 'Đây là huyệt Toàn trúc:' +
+            ' Có 2 huyệt Toàn trúc nằm đối xứng nhau qua đường sống mũi. Cụ thể chúng nằm trên đầu sống mũi, ở ngay dưới sát mép của lông mày.' +
+            ' Huyệt Toàn trúc có tác dụng giúp tuần hoàn, lưu thông máu vùng mặt..' +
+            ' Nhờ đó giảm thiểu những cơn đau đầu do căng thẳng, áp lực hoặc cải thiện các vấn đề về mắt như nhức mỏi mắt, đau do viêm xoang...' +
+        2: 'Đây là huyệt Thái Dương:' +
+            ' Mỗi người sẽ có 2 huyệt Thái dương nằm đối xứng nhau ở hai bên khu thái dương, cuối của hai chân mày. Khi sờ vào sẽ cảm thấy 2 huyệt này hơi lõm so với những huyệt đạo khác..' +
+            ' Huyệt Thái dương có tác dụng giảm các triệu chứng của đau đầu như: nhức mỏi, mất tập trung, co giật thái dương... ' +
+            ' Ngoài ra bấm huyệt này còn giúp người bệnh giảm thiểu được các vấn đề như bị viêm màng tiếp hợp hay là các cơn đau răng dữ dội.' +
+        3: 'Đây là huyệt Thiên trụ:' +
+            ' Có 2 huyệt Thiên trụ nằm ở khu vực ở phía sau gáy (ngay dưới hộp sọ) và đối xứng với nhau qua hõm sau gáy (dọc hai cơ cổ).' +
+            ' Bấm huyệt Thiên trụ sẽ giúp giảm căng cơ, đau cổ vai gáy do căng thẳng, áp lực hàng ngày, giảm đau nhức mỏi mắt, nghẹt mũi do viêm xoang, cảm cúm hay đau tai....' +
+        4:  'Đây là huyệt Suất cốc:' +
+            ' Từ đỉnh tai đi lên khoảng 1 thốn, tại vị trí lõm sát tai trong chân tóc chính là huyệt Suất cốc..' +
+            ' Day bấm huyệt Suất cốc sẽ giúp trị đau đầu, chóng mặt, hoa mắt rất hiệu quả.' +
+        5:  'Đây là huyệt Bách hội:' +
+            ' Nằm trên điểm lõm đỉnh đầu, nơi giao nhau giữa đường nối 2 đỉnh vành tai với đường dọc của cơ thể.' +
+            ' Huyệt Bách hội giúp điều trị các bệnh liên quan đến hệ thần kinh, các dây thần kinh trung ương như: tai biến mạch máu não, liệt nửa người, rối loạn chức năng giao tiếp, di chứng động mạch não..' +
+            ' Ngoài ra, huyệt còn giúp chữa các triệu chứng rối loạn thần kinh, đau nhức đỉnh đầu, đau đầu nặng, chứng hay quên, mất ngủ, đái dầm...' +
+        6:  'Đây là huyệt Nghinh hương:' +
+            ' Có 2 huyệt Nghinh Hương nằm đối xứng qua cánh mũi, tại điểm giao nhau giữa đường ngang cánh mũi và 2 đường dọc mép môi.' +
+            ' Ngoài công dụng chữa đau đầu mất ngủ thì huyệt Nghinh hương còn giúp điều trị viêm xoang, ngạt mũi, viêm mũi dị ứng...rất hiệu quả.' +
+
+        7: 'chi_tay_song',
+        8: 'phuc'
+
+    };
+
+    // Load model
+     $("document").ready (async function() { // khi web load xong thì mới load model
+        model = await tf.loadLayersModel('http://192.168.89.200:5000/static/tf_js_model/model.json');
+        console.log('Load model');
+        console.log(model.summary()); // in summary lên
+    });
+
+    $("#upload_button").click(function() {
+        $("#fileinput").trigger('click');
+    });
+
+    // Hàm predict
+    async function predict() {
+
+    // 1. Chuyen anh ve tensor
+     let image = document.getElementById("display_image"); // sau khi load xong thì chuyển ảnh về thẻ có tên id là
+        // display image
+     let img = tf.browser.fromPixels(image); // chuyển ảnh về đối tượng img
+     let normalizationOffset = tf.scalar(255/2); // 127.5
+     let tensor = img
+            .resizeNearestNeighbor([224, 224])
+            .toFloat()
+            .sub(normalizationOffset) // lúc train đã chọn normalization
+            .div(normalizationOffset)
+            .reverse(2)
+            .expandDims();
+
+    // 2. Predict
+    let predictions = await model.predict(tensor);
+    predictions = predictions.dataSync();
+    console.log(predictions);
+
+
+
+    // 3. Hien thi len man hinh
+    let pro=0 ;let pp=0;
+    let top5 = Array.from(predictions)
+        .map(function (p, i) {
+            return {
+                probability: p,
+                className: FLOWER_CLASS[i]
+
+
+            };
+        }).sort(function (a, b) {
+            return b.probability - a.probability;
+        });
+        console.log('lagifffff');
+        let m = predictions[0];
+        console.log(top5);
+
+        $("#result_info").empty();
+        top5.forEach(function (p) {
+
+               for(pro;pro<20;pro++)
+               {
+                   if(m<predictions[pro])
+                   {
+                       m = predictions[pro];
+                       pp = pro;
+                       console.log(pp);
+
+                   }
+
+               }
+               document.getElementById("text1").innerHTML = FLOWER_CLASS[pp];
+               console.log('-------------------------------------------------------')
+               console.log(FLOWER_CLASS[pp]);
+               //<p>FLOWER_CLASS[pp]</p>;
+             //  document.getElementById("text1").innerHTML = FLOWER_CLASS[pp];
+
+            });
+        };
+
+    $("#fileinput").change(function () {
+        let reader = new FileReader();
+        reader.onload = function () {
+            let dataURL = reader.result;
+
+            imEl = document.getElementById("display_image");
+            imEl.onload = function () {
+                // khi ảnh được load xong thì gọi hàm predict
+               predict();
+
+            }
+            $("#display_image").attr("src", dataURL);
+            $("#result_info").empty();
+
+        }
+
+        let file = $("#fileinput").prop("files")[0];
+        reader.readAsDataURL(file);
+    });
+
+</script>
+
+</html>
